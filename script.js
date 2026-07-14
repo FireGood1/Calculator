@@ -1,12 +1,10 @@
-let number1
 let operator
 let operatorCount = 0
-let number2
-let calculate = false
 let calculateThisString = ""
 let operatorList = ["×", "+", "-", "÷"]
-let calculateThisArray = []
-
+let historyEquation = []
+let historyOperator = []
+let historyPosition = -1
 function addition(num1, num2) {
     return Number(num1) + Number(num2)
 }
@@ -22,7 +20,6 @@ function division(num1, num2) {
 function root(num1) {
     return num1 ** 0.5
 }
-
 function operate(number1, operator, number2) {
     if (operator == "+") {
         return addition(number1, number2)
@@ -36,8 +33,6 @@ function operate(number1, operator, number2) {
     else if (operator == "÷") {
         return division(number1, number2)
     }
-
-
 }
 let zero = document.querySelector(".zero");
 let one = document.querySelector(".one");
@@ -56,8 +51,11 @@ let divide = document.querySelector(".divide")
 let equal = document.querySelector(".equal")
 let clear = document.querySelector(".clear")
 let decimal = document.querySelector(".decimal")
-let sqrt = document.querySelector(".sqrt")
+let deleteChar = document.querySelector(".delete")
+let back = document.querySelector(".back")
+let percent = document.querySelector(".percent")
 let calculatorScreen = document.querySelector("#screen")
+
 
 let calculator = []
 zero.addEventListener("click", () => {
@@ -113,9 +111,15 @@ add.addEventListener("click", () => {
         console.log("You're adding when there's currently an operator, so add later")
         console.log(calculator)
         console.log(operator)
+        historyEquation.push(calculator)
+        historyOperator.push(operator)
+        historyPosition++
         operatorCount++
         calculateThisString = calculatorScreen.textContent
         calculator = calculateThisString.split(operator)
+        console.log(calculator[0])
+        console.log(operator)
+        console.log(calculator[1])
         calculator.push(operate(calculator[0], operator, calculator[1]).toString())
         calculator.splice(0, calculator.length-1)
         calculator.push("+")
@@ -137,6 +141,9 @@ subtract.addEventListener("click", () => {
         console.log("You're subtracting when there's currently an operator, so subtract later")
         console.log(calculator)
         console.log(operator)
+        historyEquation.push(calculator)
+        historyOperator.push(operator)
+        historyPosition++
         operatorCount++
         calculateThisString = calculatorScreen.textContent
         calculator = calculateThisString.split(operator)
@@ -161,6 +168,9 @@ multiply.addEventListener("click", () => {
         console.log("You're multiplying when there's currently an operator, so multiply later")
         console.log(calculator)
         console.log(operator)
+        historyEquation.push(calculator)
+        historyOperator.push(operator)
+        historyPosition++
         operatorCount++
         calculateThisString = calculatorScreen.textContent
         calculator = calculateThisString.split(operator)
@@ -189,11 +199,15 @@ divide.addEventListener("click", () => {
         console.log("You're dividing when there's currently an operator, so divide later")
         console.log(calculator)
         console.log(operator)
+        historyEquation.push(calculator)
+        historyOperator.push(operator)
+        historyPosition++
         operatorCount++
         calculateThisString = calculatorScreen.textContent
         calculator = calculateThisString.split(operator)
         calculator.push(operate(calculator[0], operator, calculator[1]).toString())
         calculator.splice(0, calculator.length-1)
+
         calculator.push("÷")
         calculatorScreen.textContent = calculator.join("")
         operatorCount = 1
@@ -213,10 +227,19 @@ equal.addEventListener("click", () => {
         operatorCount = 0
         operator = ""
     }
-    else {
+    else if (!operatorList.includes(calculator.at(-1))){
         console.log("You pressed equal and it followed through!")
         console.log(calculator)
         console.log(operator)
+        historyEquation.push(calculator)
+        historyOperator.push(operator)
+        console.log(`History equation: ${historyEquation}`)
+        console.log(`History operator: ${historyOperator}`)
+        console.log(`History position: ${historyPosition}`)
+        historyPosition++
+        console.log(`History equation: ${historyEquation}`)
+        console.log(`History operator: ${historyOperator}`)
+        console.log(`History position: ${historyPosition}`)
         calculateThisString = calculatorScreen.textContent
         calculator = calculateThisString.split(operator)
         calculator.push(operate(calculator[0], operator, calculator[1]).toString())
@@ -239,8 +262,44 @@ decimal.addEventListener("click", () => {
         calculatorScreen.textContent = calculator.join("")
     }
 })
-sqrt.addEventListener("click", () => {
-    calculator.push("√")
-    calculatorScreen.textContent = calculator.join("")
+deleteChar.addEventListener("click", () => {
+    if (operatorList.includes(calculator.at(-1))) {
+        calculator.pop()
+        calculatorScreen.textContent = calculator.join("")
+        operatorCount = 0
+        operator = ""
+    }
+    else {
+        calculator.pop()
+        calculatorScreen.textContent = calculator.join("")
+    }
+})
+back.addEventListener("click", () => {
+    if (historyPosition > 0) {
+        operator = historyOperator[historyPosition]
+        if (operator != "") {operatorCount = 1}
+        calculator = historyEquation[historyPosition]
+        calculatorScreen.textContent = calculator.join("")
+        historyPosition--    
+    }
+})
+percent.addEventListener("click", () => {
+    let operatorIndex = calculator.findIndex(item => operatorList.includes(item))
+    if (operatorIndex !== -1) {
+        let tempArray = calculator.slice(operatorIndex + 1)
+        let tempVar = (tempArray.join("") / 100).toString()
+        console.log(tempArray)
+         calculator.splice(operatorIndex + 1)
+        calculator.push(tempVar)
+        console.log(calculator)
+        calculatorScreen.textContent = calculator.join("")
+    }
+    else {
+        let tempVar = calculator.join("")
+        tempVar = (tempVar / 100).toString()
+        calculator = tempVar.split("")
+        console.log(calculator)
+        calculatorScreen.textContent = calculator.join("")
+    }
 })
 // Save in toolkit: && calculator.some(symbol =>calculator.join("").includes(symbol)) === false
