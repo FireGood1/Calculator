@@ -21,7 +21,6 @@ body {
     height: 100dvh;
 }
 
-
 #calculator-body {
     display: flex;
     flex-direction: column;
@@ -38,7 +37,7 @@ body {
     font-size: 20px;
     margin-bottom: 2px;
 }
-#buttonContainer {
+#button-container {
     display: flex;
     flex-direction: column;
     width: 500px;
